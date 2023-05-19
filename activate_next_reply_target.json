@@ -1,0 +1,89 @@
+{
+  "name": "Activate Next Reply Target",
+  "description": "Activate SLA by adding a public message as requester and make it private",
+  "zis_template_version": "2019-10-14",
+  "resources": {
+    "make_comment_private": {
+      "type": "ZIS::Action::Http",
+      "properties": {
+        "name": "make_comment_private",
+        "definition": {
+          "method": "PUT",
+          "path": "/api/v2/tickets/{{$.ticket_id}}/comments/{{$.comment_id}}/make_private",
+          "connectionName": "zendesk"
+        }
+      }
+    },
+    "flow_activate_next_reply_target": {
+      "type": "ZIS::Flow",
+      "properties": {
+        "name": "activate_next_reply_target",
+        "definition": {
+          "StartAt": "CheckSlaCommentText",
+          "States": {
+            "CheckSlaCommentText": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.input.ticket_event.comment.body",
+                  "StringEquals": "new comment",
+                  "Next": "CheckCommentUpdater"
+                }
+              ],
+              "Default": "Finish"
+            },
+            "CheckCommentUpdater": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.input.ticket_event.comment.author.id",
+                  "NumericEqualsPath": "$.input.ticket_event.ticket.requester_id",
+                  "Next": "CheckSlaCommentPublic"
+                }
+              ],
+              "Default": "Finish"
+            },
+            "CheckSlaCommentPublic": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.input.ticket_event.comment.is_public",
+                  "BooleanEquals": true,
+                  "Next": "make_comment_private"
+                }
+              ],
+              "Default": "Finish"
+            },
+            "make_comment_private": {
+              "Type": "Action",
+              "ActionName": "zis:%INTEGRATION_NAME%:action:make_comment_private",
+              "Parameters": {
+                "ticket_id.$": "$.input.ticket_event.ticket.id",
+                "comment_id.$": "$.input.ticket_event.comment.id"
+              },
+              "ResultPath": "$.posted_webhook",
+              "Next": "FinishWithAction"
+            },
+            "FinishWithAction": {
+              "Type": "Succeed",
+              "Message": "Execution Successful. Comment made Private"
+            },
+            "Finish": {
+              "Type": "Succeed",
+              "Message": "Execution Successful. No action"
+            }
+          }
+        }
+      }
+    },
+    "jobspec_activate_next_reply_target": {
+      "type": "ZIS::JobSpec",
+      "properties": {
+        "name": "activate_next_reply_target",
+        "event_source": "support",
+        "event_type": "ticket.CommentAdded",
+        "flow_name": "zis:%INTEGRATION_NAME%:flow:activate_next_reply_target"
+      }
+    }
+  }
+}
