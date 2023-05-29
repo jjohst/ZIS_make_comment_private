@@ -1,6 +1,6 @@
 {
-  "name": "Activate Next Reply Target",
-  "description": "Activate SLA by adding a public message as requester and make it private",
+  "name": "MakeTargetMessagePrivate",
+  "description": "Specific comment authored by Ticket Requester is made private",
   "zis_template_version": "2019-10-14",
   "resources": {
     "make_comment_private": {
@@ -14,10 +14,10 @@
         }
       }
     },
-    "flow_activate_next_reply_target": {
+    "flow_make_target_message_private": {
       "type": "ZIS::Flow",
       "properties": {
-        "name": "activate_next_reply_target",
+        "name": "MakeTargetMessagePrivate",
         "definition": {
           "StartAt": "CheckSlaCommentText",
           "States": {
@@ -56,7 +56,7 @@
             },
             "make_comment_private": {
               "Type": "Action",
-              "ActionName": "zis:%INTEGRATION_NAME%:action:make_comment_private",
+              "ActionName": "zis:%INTEGRATION_NAME%:action:MakeTargetMessagePrivate",
               "Parameters": {
                 "ticket_id.$": "$.input.ticket_event.ticket.id",
                 "comment_id.$": "$.input.ticket_event.comment.id"
@@ -76,13 +76,13 @@
         }
       }
     },
-    "jobspec_activate_next_reply_target": {
+    "jobspec_MakeTargetMessagePrivate": {
       "type": "ZIS::JobSpec",
       "properties": {
-        "name": "activate_next_reply_target",
+        "name": "MakeTargetMessagePrivate",
         "event_source": "support",
         "event_type": "ticket.CommentAdded",
-        "flow_name": "zis:%INTEGRATION_NAME%:flow:activate_next_reply_target"
+        "flow_name": "zis:%INTEGRATION_NAME%:flow:MakeTargetMessagePrivate"
       }
     }
   }
