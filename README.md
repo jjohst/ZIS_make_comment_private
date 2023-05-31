@@ -22,3 +22,7 @@ The purpose is to have active SLA next reply-time targets on tickets that requir
 }
 ```
 4. The ZIS flow listens for this update ☝ and when it happens, it makes that comment private.
+
+# Here is the flow diagrammed
+
+![](https://raw.githubusercontent.com/jjohst/ZIS_make_comment_private/d40fe5a08ce967f19111b066f8f9fd85dd61036f/image.png)
