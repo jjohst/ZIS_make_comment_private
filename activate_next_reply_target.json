@@ -6,7 +6,7 @@
     "make_comment_private": {
       "type": "ZIS::Action::Http",
       "properties": {
-        "name": "make_comment_private",
+        "name": "MakeTargetMessagePrivate",
         "definition": {
           "method": "PUT",
           "path": "/api/v2/tickets/{{$.ticket_id}}/comments/{{$.comment_id}}/make_private",
