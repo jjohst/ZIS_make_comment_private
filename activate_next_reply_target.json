@@ -49,10 +49,15 @@
                 {
                   "Variable": "$.input.ticket_event.comment.is_public",
                   "BooleanEquals": true,
-                  "Next": "make_comment_private"
+                  "Next": "wait_a_second"
                 }
               ],
               "Default": "Finish"
+            },
+            "wait_a_second": {
+              "Type": "Wait",
+              "Seconds": 1,
+              "Next": "make_comment_private"
             },
             "make_comment_private": {
               "Type": "Action",
